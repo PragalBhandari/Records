@@ -17,25 +17,17 @@
       margin-bottom: 20px;
     }
 
-    /* Container to enable horizontal scrolling on small screens */
-    .table-container {
-      width: 100%;
-      overflow-x: auto;
-    }
-
     table {
       margin: 0 auto;
-      width: 100%;
-      max-width: 800px;
+      width: 80%;
+      max-width: 900px;
       border-collapse: collapse;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      min-width: 300px; /* ensures table doesn't get too narrow */
     }
     th, td {
-      padding: 12px 15px;
+      padding: 12px 20px;
       border: 1px solid #ddd;
       text-align: left;
-      white-space: nowrap; /* keep content in one line */
     }
     th {
       background: #007BFF;
@@ -49,55 +41,84 @@
       background: #e1f5fe;
     }
 
-    /* Smaller padding and font for very small devices */
-    @media (max-width: 400px) {
-      th, td {
-        padding: 8px 10px;
-        font-size: 14px;
+    /* Responsive: on small screens, convert table rows to cards */
+    @media (max-width: 700px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
       }
-      body {
-        padding: 15px 10px;
+      thead tr {
+        /* hide header row on mobile */
+        display: none;
       }
-      h1 {
-        font-size: 1.5rem;
+      tr {
+        margin-bottom: 15px;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        padding: 12px 15px;
+      }
+      td {
+        /* add label before each cell's data */
+        padding: 10px 15px;
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 120px;
+        white-space: normal;
+        text-align: left;
+      }
+      td:last-child {
+        border-bottom: none;
+      }
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        top: 10px;
+        font-weight: 600;
+        color: #007BFF;
+        white-space: nowrap;
       }
     }
   </style>
 </head>
 <body>
   <h1>📋 Registered Devices</h1>
-  <div class="table-container">
-    <table>
-      <thead>
-        <tr><th>Name</th><th>MAC Address</th><th>Time stamp</th></tr>
-      </thead>
-      <tbody id="dataTable"></tbody>
-    </table>
-  </div>
+  <table>
+    <thead>
+      <tr><th>Name</th><th>MAC Address</th><th>Time stamp</th></tr>
+    </thead>
+    <tbody id="dataTable"></tbody>
+  </table>
 
-<script>
-  const backendURL = "https://script.google.com/macros/s/AKfycbxWesAH2PI1FKQdnulNFy8Z9BhZPS2HXnaD62LKlMquFqkCKRWJaqLEfl0JnJBAo21SJQ/exec";
+  <script>
+    const backendURL = "https://script.google.com/macros/s/AKfycbxWesAH2PI1FKQdnulNFy8Z9BhZPS2HXnaD62LKlMquFqkCKRWJaqLEfl0JnJBAo21SJQ/exec";
 
-  async function loadData() {
-    try {
-      const res = await fetch(backendURL);
-      const data = await res.json();
-      const table = document.getElementById("dataTable");
-      table.innerHTML = "";
-      data.forEach(row => {
-        const formattedTime = new Date(row.time).toLocaleString();
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${row.name}</td><td>${row.mac}</td><td>${formattedTime}</td>`;
-        table.appendChild(tr);
-      });
-    } catch (error) {
-      console.error("Failed to load data:", error);
-      const table = document.getElementById("dataTable");
-      table.innerHTML = `<tr><td colspan="3" style="color:red;">Failed to load data</td></tr>`;
+    async function loadData() {
+      try {
+        const res = await fetch(backendURL);
+        const data = await res.json();
+        const table = document.getElementById("dataTable");
+        table.innerHTML = "";
+        data.forEach(row => {
+          const formattedTime = new Date(row.time).toLocaleString();
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td data-label="Name">${row.name}</td>
+            <td data-label="MAC Address">${row.mac}</td>
+            <td data-label="Time stamp">${formattedTime}</td>
+          `;
+          table.appendChild(tr);
+        });
+      } catch (error) {
+        console.error("Failed to load data:", error);
+        const table = document.getElementById("dataTable");
+        table.innerHTML = `<tr><td colspan="3" style="color:red;">Failed to load data</td></tr>`;
+      }
     }
-  }
 
-  loadData();
-</script>
+    loadData();
+  </script>
 </body>
 </html>
