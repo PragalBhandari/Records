@@ -1,18 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Enter New Record</title>
+  <meta charset="UTF-8">
+  <title>Secure Device Entry</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #eef2f3;
+      margin: 0;
+      padding: 0;
+    }
+    #passwordModal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      width: 90%;
+      max-width: 400px;
+    }
+    input[type="password"], input[type="text"] {
+      padding: 10px;
+      width: 80%;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #007BFF;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: gray;
+      cursor: not-allowed;
+    }
+    #errorMsg, #status {
+      margin-top: 10px;
+      color: red;
+    }
+    #status.success {
+      color: green;
+    }
+    #protected {
+      display: none;
       padding: 40px;
       text-align: center;
-      margin: 0;
-    }
-    h2 {
-      color: #007BFF;
     }
     form {
       background: white;
@@ -21,128 +67,105 @@
       border-radius: 8px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
-    input, button {
-      display: block;
-      margin: 10px auto;
-      padding: 10px;
-      width: 250px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    button {
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    #status {
-      margin-top: 15px;
-      color: green;
-    }
-
-    /* Modal Styling */
-    #passwordModal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-    }
-    .modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-      text-align: center;
-      width: 300px;
-    }
-    .modal-content input {
-      width: 100%;
-      margin: 10px 0;
-    }
-    .modal-content .error {
-      color: red;
-      margin-top: 5px;
-    }
-
-    #protected {
-      display: none;
-    }
   </style>
 </head>
 <body>
-
-<!-- Password Modal -->
-<div id="passwordModal">
-  <div class="modal-content">
-    <h3>🔐 Enter Password</h3>
-    <input type="password" id="passwordInput" placeholder="Password" />
-    <button onclick="checkPassword()">Unlock</button>
-    <div class="error" id="errorText"></div>
+  <!-- 🔐 PASSWORD MODAL -->
+  <div id="passwordModal">
+    <div class="modal-content">
+      <h2>🔐 Enter Password</h2>
+      <input type="password" id="passwordInput" placeholder="Password">
+      <button onclick="checkPassword()" id="submitBtn">Unlock</button>
+      <div id="errorMsg"></div>
+    </div>
   </div>
-</div>
 
-<!-- Protected Section -->
-<div id="protected">
-  <h2>📥 Enter User Details</h2>
-  <form id="entryForm">
-    <input type="text" name="name" placeholder="User Name" required>
-    <input type="text" name="mac" placeholder="MAC Address" required>
-    <button type="submit">Submit</button>
-  </form>
-  <div id="status"></div>
-</div>
+  <!-- 📝 PROTECTED FORM -->
+  <div id="protected">
+    <h2>✅ Submit Device Info</h2>
+    <form id="entryForm">
+      <input type="text" name="name" placeholder="User Name" required>
+      <input type="text" name="mac" placeholder="MAC Address" required>
+      <button type="submit">Submit</button>
+    </form>
+    <div id="status"></div>
+  </div>
 
-<script>
-  const password = "Batman"; // Change this to your preferred password
+  <script>
+    const correctPassword = "Batman";
+    let attempts = 0;
+    let lockedOut = false;
 
-  function checkPassword() {
-    const input = document.getElementById("passwordInput").value;
-    const errorText = document.getElementById("errorText");
-    if (input === password) {
-      document.getElementById("passwordModal").style.display = "none";
-      document.getElementById("protected").style.display = "block";
-    } else {
-      errorText.textContent = "❌ Incorrect password. Try again.";
-    }
-  }
+    function checkPassword() {
+      if (lockedOut) return;
 
-  // Form submission
-  const form = document.getElementById('entryForm');
-  const backendURL = "https://script.google.com/macros/s/AKfycbxWesAH2PI1FKQdnulNFy8Z9BhZPS2HXnaD62LKlMquFqkCKRWJaqLEfl0JnJBAo21SJQ/exec";
+      const input = document.getElementById("passwordInput").value;
+      const errorMsg = document.getElementById("errorMsg");
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const status = document.getElementById('status');
-    const submitButton = form.querySelector("button");
-    submitButton.disabled = true;
-    submitButton.innerText = "Submitting...";
+      if (input === correctPassword) {
+        document.getElementById("passwordModal").style.display = "none";
+        document.getElementById("protected").style.display = "block";
+      } else {
+        attempts++;
+        errorMsg.textContent = `❌ Incorrect password. Attempt ${attempts}/3`;
 
-    const formData = new FormData(form);
-    const params = new URLSearchParams();
-    formData.forEach((value, key) => params.append(key, value));
-
-    try {
-      await fetch(backendURL, {
-        method: 'POST',
-        body: params
-      });
-      form.reset();
-      status.textContent = "✅ Entry submitted!";
-    } catch (err) {
-      status.textContent = "❌ Submission failed!";
+        if (attempts >= 3) {
+          lockOut();
+        }
+      }
     }
 
-    submitButton.disabled = false;
-    submitButton.innerText = "Submit";
-  });
-</script>
+    function lockOut() {
+      lockedOut = true;
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      let timeLeft = 30;
+      const errorMsg = document.getElementById("errorMsg");
 
+      const countdown = setInterval(() => {
+        timeLeft--;
+        errorMsg.textContent = `🔒 Too many attempts. Try again in ${timeLeft}s`;
+        if (timeLeft <= 0) {
+          clearInterval(countdown);
+          errorMsg.textContent = "";
+          btn.disabled = false;
+          lockedOut = false;
+          attempts = 0;
+        }
+      }, 1000);
+    }
+
+    // FORM SUBMIT HANDLER
+    const form = document.getElementById('entryForm');
+    const backendURL = "https://script.google.com/macros/s/AKfycbxWesAH2PI1FKQdnulNFy8Z9BhZPS2HXnaD62LKlMquFqkCKRWJaqLEfl0JnJBAo21SJQ/exec";
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const status = document.getElementById('status');
+      const button = form.querySelector("button");
+      button.disabled = true;
+      button.innerText = "Submitting...";
+
+      const formData = new FormData(form);
+      const params = new URLSearchParams();
+      formData.forEach((value, key) => params.append(key, value));
+
+      try {
+        await fetch(backendURL, {
+          method: 'POST',
+          body: params
+        });
+        form.reset();
+        status.textContent = "✅ Entry submitted successfully!";
+        status.className = "success";
+      } catch (err) {
+        status.textContent = "❌ Submission failed!";
+        status.className = "";
+      }
+
+      button.disabled = false;
+      button.innerText = "Submit";
+    });
+  </script>
 </body>
 </html>
