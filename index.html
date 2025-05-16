@@ -1,56 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Record Holder Entry</title>
+  <meta charset="UTF-8">
+  <title>Record Holders</title>
   <style>
-    body { font-family: Arial; padding: 20px; }
-    form { margin-bottom: 20px; }
-    table, th, td { border: 1px solid black; border-collapse: collapse; padding: 5px; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+    }
+    table {
+      margin: 20px auto;
+      width: 80%;
+      border-collapse: collapse;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+    }
+    th {
+      background: #007BFF;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+    tr:hover {
+      background: #e1f5fe;
+    }
   </style>
 </head>
 <body>
-  <h2>Enter User Details</h2>
-  <form id="entryForm">
-    Name: <input type="text" name="name" required><br><br>
-    MAC Address: <input type="text" name="mac" required><br><br>
-    <button type="submit">Submit</button>
-  </form>
-
-  <h2>All Entries</h2>
-  <table id="recordsTable">
-    <tr><th>Name</th><th>MAC Address</th><th>Time</th></tr>
+  <h1>📋 Registered Devices</h1>
+  <table>
+    <thead>
+      <tr><th>Name</th><th>MAC Address</th></tr>
+    </thead>
+    <tbody id="dataTable"></tbody>
   </table>
 
   <script>
-    const form = document.getElementById('entryForm');
-    const backendURL = "https://script.google.com/macros/s/AKfycbyP7LW0TKVR_dexiK1YXP_b-guneH6DTQMP9sk77XmTfu3WiwmSZ_V12UACKn_hWh_p_A/exec";
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const formData = new FormData(form);
-      const params = new URLSearchParams();
-      formData.forEach((value, key) => params.append(key, value));
-      await fetch(backendURL, {
-        method: 'POST',
-        body: params
-      });
-      form.reset();
-      loadData(); // Refresh table after submission
-    });
+    const backendURL = "https://script.google.com/macros/s/AKfycbxWesAH2PI1FKQdnulNFy8Z9BhZPS2HXnaD62LKlMquFqkCKRWJaqLEfl0JnJBAo21SJQ/exec"; // Replace with your deployed Google Apps Script URL
 
     async function loadData() {
       const res = await fetch(backendURL);
       const data = await res.json();
-      const table = document.getElementById('recordsTable');
-      table.innerHTML = `<tr><th>Name</th><th>MAC Address</th><th>Time</th></tr>`;
+      const table = document.getElementById("dataTable");
+      table.innerHTML = "";
       data.forEach(row => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${row.name}</td><td>${row.mac}</td><td>${row.time}</td>`;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${row.name}</td><td>${row.mac}</td>`;
         table.appendChild(tr);
       });
     }
 
-    loadData(); // Load existing data on page open
+    loadData();
   </script>
 </body>
 </html>
