@@ -13,6 +13,9 @@
     h2 {
       color: #007BFF;
     }
+    #protected {
+      display: none;
+    }
     form {
       background: white;
       padding: 20px;
@@ -44,17 +47,30 @@
   </style>
 </head>
 <body>
-  <h2>🔐 Enter User Details</h2>
-  <form id="entryForm">
-    <input type="text" name="name" placeholder="User Name" required>
-    <input type="text" name="mac" placeholder="MAC Address" required>
-    <button type="submit">Submit</button>
-  </form>
-  <div id="status"></div>
+  <div id="protected">
+    <h2>🔐 Enter User Details</h2>
+    <form id="entryForm">
+      <input type="text" name="name" placeholder="User Name" required>
+      <input type="text" name="mac" placeholder="MAC Address" required>
+      <button type="submit">Submit</button>
+    </form>
+    <div id="status"></div>
+  </div>
 
   <script>
+    // Ask for password
+    const password = "mySecret123"; // Change this to your preferred password
+    const userInput = prompt("Enter password to access the form:");
+
+    if (userInput === password) {
+      document.getElementById("protected").style.display = "block";
+    } else {
+      document.body.innerHTML = "<h2>❌ Access Denied</h2>";
+    }
+
+    // Submit handler
     const form = document.getElementById('entryForm');
-    const backendURL = "https://script.google.com/macros/s/AKfycbxWesAH2PI1FKQdnulNFy8Z9BhZPS2HXnaD62LKlMquFqkCKRWJaqLEfl0JnJBAo21SJQ/exec"; 
+    const backendURL = "https://script.google.com/macros/s/AKfycbxWesAH2PI1FKQdnulNFy8Z9BhZPS2HXnaD62LKlMquFqkCKRWJaqLEfl0JnJBAo21SJQ/exec";
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
