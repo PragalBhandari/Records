@@ -45,22 +45,24 @@
     <tbody id="dataTable"></tbody>
   </table>
 
-  <script>
-    const backendURL = "https://script.google.com/macros/s/AKfycbxWesAH2PI1FKQdnulNFy8Z9BhZPS2HXnaD62LKlMquFqkCKRWJaqLEfl0JnJBAo21SJQ/exec"; // Replace with your deployed Google Apps Script URL
+<script>
+  const backendURL = "https://script.google.com/macros/s/AKfycbxWesAH2PI1FKQdnulNFy8Z9BhZPS2HXnaD62LKlMquFqkCKRWJaqLEfl0JnJBAo21SJQ/exec"; // your script
 
-    async function loadData() {
-      const res = await fetch(backendURL);
-      const data = await res.json();
-      const table = document.getElementById("dataTable");
-      table.innerHTML = "";
-      data.forEach(row => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${row.name}</td><td>${row.mac}</td>`;
-        table.appendChild(tr);
-      });
-    }
+  async function loadData() {
+    const res = await fetch(backendURL);
+    const data = await res.json();
+    const table = document.getElementById("dataTable");
+    table.innerHTML = "";
+    data.forEach(row => {
+      const formattedTime = new Date(row.time).toLocaleString();
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${row.name}</td><td>${row.mac}</td><td>${formattedTime}</td>`;
+      table.appendChild(tr);
+    });
+  }
 
-    loadData();
-  </script>
+  loadData();
+</script>
+
 </body>
 </html>
