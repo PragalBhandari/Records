@@ -43,44 +43,44 @@
 
     /* Responsive: on small screens, convert table rows to cards */
     @media (max-width: 700px) {
-      table, thead, tbody, th, td, tr {
-        display: block;
-        width: 100%;
-      }
-      thead tr {
-        /* hide header row on mobile */
-        display: none;
-      }
-      tr {
-        margin-bottom: 15px;
-        background: white;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        border-radius: 8px;
-        padding: 12px 15px;
-      }
-      td {
-        /* add label before each cell's data */
-        padding: 10px 15px;
-        border: none;
-        border-bottom: 1px solid #eee;
-        position: relative;
-        padding-left: 120px;
-        white-space: normal;
-        text-align: left;
-      }
-      td:last-child {
-        border-bottom: none;
-      }
-      td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 15px;
-        top: 10px;
-        font-weight: 600;
-        color: #007BFF;
-        white-space: nowrap;
-      }
-    }
+  table, thead, tbody, th, td, tr {
+    display: block;
+    width: 100%;
+  }
+  thead tr {
+    display: none;
+  }
+  tr {
+    margin: 15px auto;      /* center by auto left/right */
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 12px 15px;
+    max-width: 350px;       /* limit max width so it’s not full screen */
+    box-sizing: border-box; /* include padding in width */
+  }
+  td {
+    padding: 10px 15px;
+    border: none;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    padding-left: 120px;
+    white-space: normal;
+    text-align: left;
+  }
+  td:last-child {
+    border-bottom: none;
+  }
+  td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 15px;
+    top: 10px;
+    font-weight: 600;
+    color: #007BFF;
+    white-space: nowrap;
+  }
+}
   </style>
 </head>
 <body>
