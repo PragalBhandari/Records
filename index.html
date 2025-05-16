@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Record Holder Entry</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    form { margin-bottom: 20px; }
+    table, th, td { border: 1px solid black; border-collapse: collapse; padding: 5px; }
+  </style>
+</head>
+<body>
+  <h2>Enter User Details</h2>
+  <form id="entryForm">
+    Name: <input type="text" name="name" required><br><br>
+    MAC Address: <input type="text" name="mac" required><br><br>
+    <button type="submit">Submit</button>
+  </form>
+
+  <h2>All Entries</h2>
+  <table id="recordsTable">
+    <tr><th>Name</th><th>MAC Address</th><th>Time</th></tr>
+  </table>
+
+  <script>
+    const form = document.getElementById('entryForm');
+    const backendURL = "PASTE_YOUR_DEPLOYED_SCRIPT_URL_HERE";
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const params = new URLSearchParams();
+      formData.forEach((value, key) => params.append(key, value));
+      await fetch(backendURL, {
+        method: 'POST',
+        body: params
+      });
+      form.reset();
+      loadData(); // Refresh table after submission
+    });
+
+    async function loadData() {
+      const res = await fetch(backendURL);
+      const data = await res.json();
+      const table = document.getElementById('recordsTable');
+      table.innerHTML = `<tr><th>Name</th><th>MAC Address</th><th>Time</th></tr>`;
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${row.name}</td><td>${row.mac}</td><td>${row.time}</td>`;
+        table.appendChild(tr);
+      });
+    }
+
+    loadData(); // Load existing data on page open
+  </script>
+</body>
+</html>
