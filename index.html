@@ -14,7 +14,24 @@
     }
     h1 {
       color: #333;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
+    }
+
+    .input-btn {
+      background-color: #007BFF;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 25px;
+      display: inline-block;
+      transition: background-color 0.3s ease;
+    }
+    .input-btn:hover {
+      background-color: #0056b3;
     }
 
     table {
@@ -41,55 +58,56 @@
       background: #e1f5fe;
     }
 
-    /* Responsive: on small screens, convert table rows to cards */
     @media (max-width: 700px) {
-  table, thead, tbody, th, td, tr {
-    display: block;
-    width: 100%;
-  }
-  thead tr {
-    display: none;
-  }
-  tr {
-    margin: 15px auto;
-    background: white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    border-radius: 8px;
-    padding: 15px 20px;
-    max-width: 100%;
-    box-sizing: border-box;
-    border: 1px solid #ddd; /* single border for the card */
-  }
-  td {
-    padding: 10px 15px;
-    border: none; /* remove all td borders */
-    position: relative;
-    padding-left: 120px;  /* increased to avoid overlap */
-    white-space: normal;
-    text-align: left;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
-  td:last-child {
-    border-bottom: none;
-  }
-  td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 15px;
-    top: 10px;
-    width: 100px; /* wider fixed width */
-    font-weight: 600;
-    color: #007BFF;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
+      table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
+      }
+      thead tr {
+        display: none;
+      }
+      tr {
+        margin: 15px auto;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        padding: 15px 20px;
+        max-width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #ddd;
+      }
+      td {
+        padding: 10px 15px;
+        border: none;
+        position: relative;
+        padding-left: 120px;
+        white-space: normal;
+        text-align: left;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+      td:last-child {
+        border-bottom: none;
+      }
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        top: 10px;
+        width: 100px;
+        font-weight: 600;
+        color: #007BFF;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
   </style>
 </head>
 <body>
   <h1>📋 Registered Devices</h1>
+  <a href="inputname.html" class="input-btn">Register a device</a>
+
   <table>
     <thead>
       <tr><th>Name</th><th>MAC Address</th><th>Time stamp</th></tr>
