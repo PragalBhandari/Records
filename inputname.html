@@ -145,40 +145,43 @@
 
   // Form submission
   const form = document.getElementById('entryForm');
-  const backendURL = "https://script.google.com/macros/s/AKfycbxWesAH2PI1FKQdnulNFy8Z9BhZPS2HXnaD62LKlMquFqkCKRWJaqLEfl0JnJBAo21SJQ/exec";
+  const backendURL = "YOUR_NEW_WEB_APP_URL"; // Replace with your Apps Script Web App URL
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const status = document.getElementById('status');
-  const submitButton = form.querySelector("button");
-  submitButton.disabled = true;
-  submitButton.innerText = "Submitting...";
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const status = document.getElementById('status');
+    const submitButton = form.querySelector("button");
+    submitButton.disabled = true;
+    submitButton.innerText = "Submitting...";
 
-  // Convert form to JSON
-  const formData = new FormData(form);
-  const data = {};
-  formData.forEach((value, key) => data[key] = value);
+    // Convert form data to JSON
+    const formData = new FormData(form);
+    const data = {};
+    formData.forEach((value, key) => data[key] = value);
 
-  try {
-    await fetch(backendURL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
-    form.reset();
-    status.textContent = "✅ Entry submitted!";
-  } catch (err) {
-    console.error(err);
-    status.textContent = "❌ Submission failed!";
-  }
+    try {
+      const res = await fetch(backendURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
 
-  submitButton.disabled = false;
-  submitButton.innerText = "Submit";
-});
+      if (!res.ok) throw new Error("HTTP error " + res.status);
 
+      form.reset();
+      status.textContent = "✅ Entry submitted!";
+    } catch (err) {
+      console.error(err);
+      status.textContent = "❌ Submission failed!";
+    }
+
+    submitButton.disabled = false;
+    submitButton.innerText = "Submit";
+  });
 </script>
+
 
 </body>
 </html>
