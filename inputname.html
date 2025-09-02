@@ -147,31 +147,37 @@
   const form = document.getElementById('entryForm');
   const backendURL = "https://script.google.com/macros/s/AKfycbxWesAH2PI1FKQdnulNFy8Z9BhZPS2HXnaD62LKlMquFqkCKRWJaqLEfl0JnJBAo21SJQ/exec";
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const status = document.getElementById('status');
-    const submitButton = form.querySelector("button");
-    submitButton.disabled = true;
-    submitButton.innerText = "Submitting...";
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const status = document.getElementById('status');
+  const submitButton = form.querySelector("button");
+  submitButton.disabled = true;
+  submitButton.innerText = "Submitting...";
 
-    const formData = new FormData(form);
-    const params = new URLSearchParams();
-    formData.forEach((value, key) => params.append(key, value));
+  // Convert form to JSON
+  const formData = new FormData(form);
+  const data = {};
+  formData.forEach((value, key) => data[key] = value);
 
-    try {
-      await fetch(backendURL, {
-        method: 'POST',
-        body: params
-      });
-      form.reset();
-      status.textContent = "✅ Entry submitted!";
-    } catch (err) {
-      status.textContent = "❌ Submission failed!";
-    }
+  try {
+    await fetch(backendURL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    form.reset();
+    status.textContent = "✅ Entry submitted!";
+  } catch (err) {
+    console.error(err);
+    status.textContent = "❌ Submission failed!";
+  }
 
-    submitButton.disabled = false;
-    submitButton.innerText = "Submit";
-  });
+  submitButton.disabled = false;
+  submitButton.innerText = "Submit";
+});
+
 </script>
 
 </body>
