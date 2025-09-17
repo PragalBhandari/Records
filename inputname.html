@@ -143,10 +143,9 @@
     }
   }
 
-  // 🔑 Trigger Unlock when pressing Enter inside password input
   document.getElementById("passwordInput").addEventListener("keypress", function (e) {
     if (e.key === "Enter") {
-      e.preventDefault(); // prevent form submit/reload
+      e.preventDefault();
       checkPassword();
     }
   });
@@ -154,32 +153,56 @@
   const form = document.getElementById('entryForm');
   const backendURL = "https://script.google.com/macros/s/AKfycbwyLZuOQ8sCv0HloxDal7wehOc99ZA3nO_E1zGAJyP3JmTjybu9ECTTsrSuHj5DxZDlng/exec"; 
 
+  // ✅ Fetch existing MAC addresses
+  let existingMACs = [];
+  async function loadMACs() {
+    try {
+      const res = await fetch(backendURL);
+      const data = await res.json();
+      existingMACs = data.map(row => row.mac.toLowerCase());
+    } catch (err) {
+      console.error("Failed to load MACs:", err);
+    }
+  }
+  loadMACs();
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const status = document.getElementById('status');
     const submitButton = form.querySelector("button");
-    submitButton.disabled = true;
-    submitButton.innerText = "Submitting...";
 
     const formData = new FormData(form);
     const data = {};
     formData.forEach((value, key) => data[key] = value);
 
+    // ✅ Check for duplicate MAC
+    const macInput = data.mac.trim().toLowerCase();
+    if (existingMACs.includes(macInput)) {
+      status.style.color = "red";
+      status.textContent = "⚠️ This MAC address is already registered!";
+      return; // stop submission
+    }
+
+    submitButton.disabled = true;
+    submitButton.innerText = "Submitting...";
+
     try {
-      const res = await fetch(backendURL, {
+      await fetch(backendURL, {
         method: 'POST',
-        mode: 'no-cors', // 🔑 helps bypass CORS
+        mode: 'no-cors',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
       });
 
-      // Since "no-cors" won’t return JSON, just show success
       form.reset();
+      status.style.color = "green";
       status.textContent = "✅ Entry submitted!";
+      existingMACs.push(macInput); // add new one to memory
     } catch (err) {
       console.error("Submission error:", err);
+      status.style.color = "red";
       status.textContent = "❌ Submission failed! Check console.";
     }
 
@@ -187,9 +210,6 @@
     submitButton.innerText = "Submit";
   });
 </script>
-
-
-
 
 </body>
 </html>
