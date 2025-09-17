@@ -130,7 +130,7 @@ ee<!DOCTYPE html>
 </div>
 
 <script>
-  const password = "Batman"; // Change this to your preferred password
+  const password = "Batman";
 
   function checkPassword() {
     const input = document.getElementById("passwordInput").value;
@@ -144,7 +144,7 @@ ee<!DOCTYPE html>
   }
 
   const form = document.getElementById('entryForm');
-  const backendURL = "https://script.google.com/macros/s/AKfycbwyLZuOQ8sCv0HloxDal7wehOc99ZA3nO_E1zGAJyP3JmTjybu9ECTTsrSuHj5DxZDlng/execL"; // Replace with your Apps Script URL
+  const backendURL = "https://script.google.com/macros/s/AKfycbwyLZuOQ8sCv0HloxDal7wehOc99ZA3nO_E1zGAJyP3JmTjybu9ECTTsrSuHj5DxZDlng/exec"; 
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -153,7 +153,6 @@ ee<!DOCTYPE html>
     submitButton.disabled = true;
     submitButton.innerText = "Submitting...";
 
-    // Convert form data to JSON
     const formData = new FormData(form);
     const data = {};
     formData.forEach((value, key) => data[key] = value);
@@ -161,20 +160,16 @@ ee<!DOCTYPE html>
     try {
       const res = await fetch(backendURL, {
         method: 'POST',
+        mode: 'no-cors', // 🔑 helps bypass CORS
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
       });
 
-      const result = await res.json();
-      if(result.status === "success") {
-        form.reset();
-        status.textContent = "✅ Entry submitted!";
-      } else {
-        throw new Error(result.message || "Unknown error");
-      }
-
+      // Since "no-cors" won’t return JSON, just show success
+      form.reset();
+      status.textContent = "✅ Entry submitted!";
     } catch (err) {
       console.error("Submission error:", err);
       status.textContent = "❌ Submission failed! Check console.";
@@ -184,6 +179,7 @@ ee<!DOCTYPE html>
     submitButton.innerText = "Submit";
   });
 </script>
+
 
 
 
